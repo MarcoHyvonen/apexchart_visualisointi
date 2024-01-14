@@ -1,0 +1,197 @@
+type: custom:apexcharts-card
+experimental:
+  color_threshold: true
+show:
+  last_updated: true
+header:
+  standard_format: true
+  show: true
+  show_states: true
+  colorize_states: true
+graph_span: 24h
+span:
+  start: day
+now:
+  show: true
+  label: Nyt
+series:
+  - entity: sensor.nordpool_kwh_fi_eur_3_10_024
+    yaxis_id: output_price
+    name: Sähkön hinta (kuluva tunti)
+    attribute: Current price
+    type: column
+    group_by:
+      func: last
+      duration: 60min
+    unit: c/kWh
+    data_generator: |
+      return entity.attributes.raw_today.map((entry) => {
+        return [new Date(entry.start), entry.value];
+      });
+    stroke_width: 18
+    show:
+      extremas: true
+      header_color_threshold: true
+    color_threshold:
+      - value: 0
+        color: green
+      - value: 10
+        color: blue
+      - value: 30
+        color: red
+      - value: 50
+        color: darkred
+  - entity: sensor.nordpool_kwh_fi_eur_3_10_024
+    yaxis_id: output_price_ka
+    name: Sähkön keskihinta (tänään)
+    attribute: average
+    type: line
+    color: gray
+    group_by:
+      func: last
+      duration: 1m
+    stroke_width: 3
+    show:
+      legend_value: false
+      in_header: true
+      header_color_threshold: false
+      extremas: false
+      datalabels: false
+  - entity: sensor.energy_total_uusi
+    yaxis_id: output_total
+    name: Sähkön kulutus (kuluva tunti)
+    color: red
+    type: area
+    curve: smooth
+    show:
+      in_chart: true
+      extremas: true
+      header_color_threshold: true
+    group_by:
+      func: last
+      duration: 60min
+    stroke_width: 3
+  - entity: sensor.openweathermap_temperature
+    yaxis_id: output_temperature
+    name: Ulkolämpötila Lappeenranta
+    type: line
+    show:
+      in_chart: true
+      extremas: true
+      header_color_threshold: true
+    color_threshold:
+      - value: -30
+        color: steelblue
+      - value: -5
+        color: midnightblue
+      - value: 5
+        color: orange
+      - value: 15
+        color: orangered
+      - value: 23
+        color: red
+      - value: 26
+        color: darkred
+    group_by:
+      func: last
+      duration: 60min
+    stroke_width: 10
+  - entity: sensor.olohuone_palovaroitin_temperature
+    yaxis_id: output_temperature_sisa
+    name: Sisälämpötila olohuone
+    type: line
+    show:
+      in_chart: true
+      extremas: true
+      header_color_threshold: true
+    color_threshold:
+      - value: 18
+        color: steelblue
+      - value: 19
+        color: midnightblue
+      - value: 20
+        color: orange
+      - value: 21
+        color: orangered
+      - value: 22
+        color: red
+      - value: 23
+        color: darkred
+    group_by:
+      func: last
+      duration: 60min
+    stroke_width: 10
+  - entity: sensor.ulkorakennus_palovaroitin_temperature
+    yaxis_id: output_temperature_sisa
+    name: Sisälämpötila piharakennus
+    type: line
+    show:
+      in_chart: true
+      extremas: true
+      header_color_threshold: true
+    color_threshold:
+      - value: 18
+        color: steelblue
+      - value: 19
+        color: midnightblue
+      - value: 20
+        color: orange
+      - value: 21
+        color: orangered
+      - value: 22
+        color: red
+      - value: 23
+        color: darkred
+    group_by:
+      func: last
+      duration: 60min
+    stroke_width: 10
+yaxis:
+  - id: output_price
+    show: true
+    opposite: false
+    min: 0
+    max: 40
+    apex_config:
+      labels:
+        formatter: |
+          EVAL:v => `${v.toFixed(0)} c/kWh`
+  - id: output_price_ka
+    show: false
+    opposite: false
+    min: 0
+    max: 40
+  - id: output_total
+    show: true
+    min: 0
+    opposite: false
+    apex_config:
+      labels:
+        decimalsInFloat: 0
+        formatter: |
+          EVAL:v => `${v.toFixed(2)} kWh`
+  - id: output_temperature
+    show: true
+    opposite: true
+    min: -35
+    max: 35
+    apex_config:
+      labels:
+        formatter: |
+          EVAL:v => `${v.toFixed(0)} °C`
+  - id: output_temperature_sisa
+    show: false
+    opposite: true
+    min: -35
+    max: 35
+apex_config:
+  chart:
+    background: '#000'
+    foreColor: '#fff'
+    height: 400%
+  yaxis:
+    decimalsInFloat: 0
+    opposite: true
+  tooltip:
+    x:
+      format: HH:mm
